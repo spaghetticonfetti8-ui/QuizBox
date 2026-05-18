@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizBox - Interactive Quiz Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🎓 QuizBox</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-page="quiz">Take Quiz</a></li>
+                <li><a href="#" class="nav-link" data-page="leaderboard">Leaderboard</a></li>
+                <li><a href="#" class="nav-link" data-page="admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Welcome to QuizBox</h1>
+                <p>Test your knowledge across multiple categories and compete on the leaderboard!</p>
+                <button class="btn btn-primary btn-large" onclick="navigateTo('quiz')">Start Taking Quizzes</button>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Multiple Categories</h3>
+                    <p>Quizzes tailored for different age groups: Primary, Mid, and Senior</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Dynamic Questions</h3>
+                    <p>Create quizzes with custom number of questions and upload via spreadsheet</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Leaderboard</h3>
+                    <p>Compete with others and see top 10 performers across all quizzes</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Feedback</h3>
+                    <p>Get immediate results with detailed answer review and explanations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Selection Page -->
+        <div id="quiz" class="page">
+            <h2>Select a Quiz Category</h2>
+            <div class="category-buttons">
+                <button class="btn btn-category active" data-category="primary">
+                    <span class="category-icon">👶</span>
+                    <span>Primary</span>
+                    <span class="category-desc">Under 10 years</span>
+                </button>
+                <button class="btn btn-category" data-category="mid">
+                    <span class="category-icon">👦</span>
+                    <span>Mid</span>
+                    <span class="category-desc">11-18 years</span>
+                </button>
+                <button class="btn btn-category" data-category="senior">
+                    <span class="category-icon">👨</span>
+                    <span>Senior</span>
+                    <span class="category-desc">18+ years</span>
+                </button>
+            </div>
+
+            <div class="quiz-list">
+                <div id="quizList" class="grid-container"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Taking Page -->
+        <div id="quiz-taking" class="page">
+            <div class="quiz-header">
+                <h2 id="quizTitle">Quiz Title</h2>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="questionNumber">Question 1 of 10</p>
+            </div>
+
+            <div class="quiz-body">
+                <div id="questionContainer"></div>
+            </div>
+
+            <div class="quiz-footer">
+                <button id="prevBtn" class="btn btn-secondary" onclick="previousQuestion()" style="display: none;">← Previous</button>
+                <button id="nextBtn" class="btn btn-primary" onclick="nextQuestion()" style="display: none;">Next →</button>
+                <button id="submitBtn" class="btn btn-success" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <!-- Results Page -->
+        <div id="results" class="page">
+            <div class="results-container">
+                <h2>Quiz Complete! 🎉</h2>
+                
+                <div class="score-circle">
+                    <div class="score-content">
+                        <span id="scorePercent" class="score-percent">0%</span>
+                        <span class="score-label">Score</span>
+                    </div>
+                </div>
+
+                <p id="scoreMessage" class="score-message">Great Job!</p>
+                <p id="scoreStats" class="score-stats">You answered X out of X questions correctly.</p>
+
+                <div class="results-actions">
+                    <button class="btn btn-primary" onclick="reviewAnswers()">Review Answers</button>
+                    <button class="btn btn-secondary" onclick="navigateTo('quiz')">Take Another Quiz</button>
+                    <button class="btn btn-info" onclick="navigateTo('leaderboard')">View Leaderboard</button>
+                </div>
+
+                <div id="answerReview" class="answer-review" style="display: none;">
+                    <h3>Answer Review</h3>
+                    <div id="reviewList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Page -->
+        <div id="leaderboard" class="page">
+            <h2>🏆 Top Performers</h2>
+            
+            <div class="leaderboard-filters">
+                <button class="btn btn-filter active" data-filter="all">All Categories</button>
+                <button class="btn btn-filter" data-filter="primary">Primary</button>
+                <button class="btn btn-filter" data-filter="mid">Mid</button>
+                <button class="btn btn-filter" data-filter="senior">Senior</button>
+            </div>
+
+            <div class="leaderboard-container">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player Name</th>
+                            <th>Category</th>
+                            <th>Quiz</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                    </tbody>
+                </table>
+                <div id="emptyLeaderboard" class="empty-state" style="display: none;">
+                    <p>No leaderboard data yet. Be the first to complete a quiz!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="admin" class="page">
+            <h2>📋 Admin Panel</h2>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" data-tab="upload">Upload Quizzes</button>
+                <button class="admin-tab-btn" data-tab="create">Create Quiz</button>
+                <button class="admin-tab-btn" data-tab="manage">Manage Quizzes</button>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="upload-tab" class="admin-tab-content active">
+                <div class="admin-card">
+                    <h3>📤 Upload Quizzes from CSV</h3>
+                    <p class="info-text">Upload a CSV file with quiz questions. Required columns:</p>
+                    <div class="csv-format">
+                        <p><strong>Quiz Name | Category | Question | Option A | Option B | Option C | Option D | Correct Answer</strong></p>
+                        <p style="font-size: 0.9em; color: #666;">Example:</p>
+                        <p style="font-size: 0.85em; font-family: monospace; background: #f3f4f6; padding: 10px; border-radius: 4px;">
+                            Math Quiz,primary,What is 2+2?,3,4,5,6,B
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        <input type="file" id="csvFile" accept=".csv" class="form-input">
+                    </div>
+                    <button class="btn btn-primary" onclick="uploadCSV()">Upload CSV</button>
+                </div>
+            </div>
+
+            <!-- Create Tab -->
+            <div id="create-tab" class="admin-tab-content">
+                <div class="admin-card">
+                    <h3>➕ Create New Quiz</h3>
+                    <form onsubmit="return false;" class="admin-form">
+                        <div class="form-group">
+                            <label>Quiz Name:</label>
+                            <input type="text" id="newQuizName" class="form-input" placeholder="Enter quiz name">
+                        </div>
+                        <div class="form-group">
+                            <label>Category:</label>
+                            <select id="newQuizCategory" class="form-input">
+                                <option value="">Select Category</option>
+                                <option value="primary">Primary (Under 10)</option>
+                                <option value="mid">Mid (11-18)</option>
+                                <option value="senior">Senior (18+)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Questions:</label>
+                            <input type="number" id="numQuestions" class="form-input" min="1" max="50" placeholder="1-50">
+                        </div>
+                        <button type="button" class="btn btn-success" onclick="createEmptyQuiz()">Create Quiz</button>
+                    </form>
+                    <p class="info-text">This will create an empty quiz that you can edit in the Manage section.</p>
+                </div>
+            </div>
+
+            <!-- Manage Tab -->
+            <div id="manage-tab" class="admin-tab-content">
+                <div class="admin-card">
+                    <h3>✏️ Manage Quizzes</h3>
+                    <div class="manage-filters">
+                        <input type="text" id="searchQuiz" class="form-input" placeholder="Search quiz by name...">
+                        <select id="categoryFilter" class="form-input">
+                            <option value="">All Categories</option>
+                            <option value="primary">Primary</option>
+                            <option value="mid">Mid</option>
+                            <option value="senior">Senior</option>
+                        </select>
+                    </div>
+                    <div id="quizManageList" class="quiz-manage-list"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Player Modal -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <h2>Enter Your Name</h2>
+            <form onsubmit="startQuiz(event)">
+                <div class="form-group">
+                    <input type="text" id="playerName" class="form-input" placeholder="Your name" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-success">Start Quiz</button>
+                    <button type="button" class="btn btn-secondary" onclick="closePlayerModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Quiz Modal -->
+    <div id="editQuizModal" class="modal">
+        <div class="modal-content modal-large">
+            <h2>Edit Quiz</h2>
+            <form id="editQuizForm"></form>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
